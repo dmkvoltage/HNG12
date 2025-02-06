@@ -1,85 +1,128 @@
-# HNG12-Stage0
-# Basic Information API
+# HNG12-Stage1
+# Number Classification API 🔢
 
-A simple API that returns basic information including my email, current datetime, and my GitHub URL in a JSON format.
-I made use of FastAPI which is much easier, simple to use and too basic. Also, it is robust.
-For testing, I made use of Postman as well as the browser, since it's a GET request
+A robust FastAPI-powered REST API that analyzes numbers, providing mathematical properties and interesting facts. Built with performance and scalability in mind, this API offers comprehensive number analysis including primality tests, perfect number verification, and Armstrong number detection.
 
-## Description
+## 🌟 Features
 
-This API was developed on Render as part of the HNG12 internship program Stage0. It provides a single endpoint that returns some basic information in JSON format, including:
-- My registered email address
-- The current datetime (ISO 8601 format), and 
-- My GitHub repository URL
+- **Number Properties Analysis**
+  - Prime number detection
+  - Perfect number verification
+  - Armstrong number identification
+  - Odd/Even classification
+  - Digit sum calculation
 
+- **Fun Facts Integration**
+  - Retrieves interesting mathematical facts from Numbers API
+  - Custom explanations for Armstrong numbers
 
-### Prerequisites
-- Python 3.8 or higher
-- pip (Python package manager)
+## 🚀 Live Demo
 
-### Local Development
+API is accessible at: [Your Render URL here]
 
-1. Clone the repository
-```bash
-git clone https://github.com/dmkvoltage/HNG12
-cd HNG12
+## 📚 API Documentation
+
+### Main Endpoint
+
+```
+GET /api/classify-number?number={number}
 ```
 
-2. Create a virtual environment
+### Example Request
+
 ```bash
-python -m venv venv
-source venv\Scripts\activate
+curl "http://127.0.0.1:8000/api/classify-number?number=371"
 ```
 
-3. Install dependencies
-From the requirements.txt file, install the dependencies
-```bash
-pip install -r requirements.txt
-```
+### Sample Response
 
-4. Run the application
-```bash
-uvicorn main:app --reload
-```
-The API will be available at `http://localhost:8000`
-
-
-
-## API Documentation
-### Endpoint
-
-- URL: `GET /`
-- Description: Returns basic information including email, current datetime, and GitHub URL
-
-### Response Format
 ```json
 {
-    "email": "kingokingsleykaah@gmail.com",
-    "current_datetime": "2025-01-30T09:30:00Z",
-    "github_url": "https://github.com/yourusername/your-repo"
+    "number": 371,
+    "is_prime": false,
+    "is_perfect": false,
+    "properties": ["armstrong", "odd"],
+    "digit_sum": 11,
+    "fun_fact": "371 is an Armstrong number because 3^3 + 7^3 + 1^3 = 371"
 }
 ```
 
-### Example Usage
-On the command line, 
-Using curl:
-```bash
-curl https://hng12-stage0-a4wh.onrender.com
+### Error Response
+
+```json
+{
+    "number": "abc",
+    "error": true
+}
 ```
 
-Using JavaScript:
-```javascript
-fetch('https://hng12-stage0-a4wh.onrender.com')
-  .then(response => response.json())
-  .then(data => console.log(data));
+## 🛠️ Technical Stack
+
+- **FastAPI**: High-performance web framework
+- **Python 3.7+**: Modern Python runtime
+- **Numbers API**: External API integration for mathematical facts
+- **Uvicorn**: ASGI server implementation
+
+## ⚙️ Local Development
+
+1. **Clone the Repository**
+   ```bash
+   git clone [your-repo-url]
+   cd [repository-name]
+   ```
+
+2. **Set Up Virtual Environment**
+   ```bash
+   python -m venv venv
+   # On Windows
+   venv\Scripts\activate
+   # On macOS/Linux
+   source venv/bin/activate
+   ```
+
+3. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Start Development Server**
+   ```bash
+   uvicorn main:app --reload
+   ```
+
+   Access the API at `http://localhost:8000`
+
+## 📈 Performance Features
+
+- Optimized algorithmic implementations for number property checks
+- Asynchronous request handling with FastAPI
+- Efficient caching for external API calls
+- Sub-500ms response times
+- CORS enabled for cross-origin requests
+
+## 🚀 Deployment
+
+This API is deployed on Render for reliable and scalable hosting. The deployment process is automated through GitHub integration.
+
+### Environment Requirements
+
+Create a `requirements.txt` file with:
+```
+fastapi
+uvicorn
+requests
 ```
 
-## Deployment
-This API was hosted on:
+## 🤝 Contributing
 
-1. Render
-Which offers a free plan and relatively easy to use
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Performance
-The API is designed to be lightweight and fast, with response times consistently under 500ms.
-However, the speed also depends on your internet connection.
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Related Links
+
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [Numbers API](http://numbersapi.com/)
+- [Render Documentation](https://render.com/docs)
