@@ -1,9 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query, HTTPException
+import requests
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
-import pytz
 
-app = FastAPI(title="Stage0 Basic Info API ")
+app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
@@ -13,11 +12,50 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
-async def get_info():
-    current_time = datetime.now(pytz.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+def is_prime(n: int) -> bool:
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+def is_armstrong(n: int) -> bool:
+    digits = [int(d) for d in str(n)]
+    return sum(d ** len(digits) for d in digits) == n
+
+def is_perfect(n: int) -> bool:
+    return sum(i for i in range(1, n) if n % i == 0) == n
+
+def get_fun_fact(n: int) -> str:
+    response = requests.get(f"http://numbersapi.com/{n}/math?json")
+    if response.status_code == 200:
+        return response.json().get("text", "No fact found.")
+    return "No fact available."
+
+def generate_reason(number: int) -> str:
+    if is_armstrong(number):
+        digits = [int(d) for d in str(number)]
+        armstrong_sum = " + ".join(f"{d}^{len(digits)}" for d in digits)
+        return f"{number} is an Armstrong number because {armstrong_sum} = {number}"
+    return get_fun_fact(number)
+
+@app.get("/api/classify-number")
+def classify_number(number: str = Query(..., description="The number to classify")):
+    if not number.isdigit():
+        raise HTTPException(status_code=400, detail={"number": number, "error": True})
+    
+    number = int(number)
+    properties = []
+    if is_armstrong(number):
+        properties.append("armstrong")
+    properties.append("odd" if number % 2 != 0 else "even")
+    
     return {
-        "email": "kingokingsleykaah@gmail.com",
-        "current_datetime": current_time,
-        "github_url": "https://github.com/dmkvoltage/HNG12"
+        "number": number,
+        "is_prime": is_prime(number),
+        "is_perfect": is_perfect(number),
+        "properties": properties,
+        "digit_sum": sum(int(d) for d in str(number)),
+        "fun_fact": generate_reason(number)
     }
