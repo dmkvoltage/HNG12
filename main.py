@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Path, HTTPException
+from pydantic import BaseModel
 import requests
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,6 +14,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Utility functions
 def is_prime(n: int) -> bool:
     if n < 2:
         return False
@@ -40,12 +43,25 @@ def generate_reason(number: int) -> str:
         return f"{number} is an Armstrong number because {armstrong_sum} = {number}"
     return get_fun_fact(number)
 
-@app.get("/api/classify-number")
-def classify_number(number: str = Query(..., description="The number to classify")):
-    if not number.isdigit():
-        raise HTTPException(status_code=400, detail={"number": number, "error": True})
-    
-    number = int(number)
+# 🟢 **1️⃣ Path Parameter Version**
+@app.get("/api/classify-number/{number}")
+def classify_number_path(number: str = Path(..., description="The number to classify")):
+    if not number.isdigit():  # Handle invalid input (alphabet)
+        return {"number": number, "error": True}
+    return classify_helper(int(number))
+
+# 🟢 **2️⃣ POST Request Version**
+class NumberInput(BaseModel):
+    number: str  # Accept string to validate input first
+
+@app.post("/api/classify-number")
+def classify_number_post(data: NumberInput):
+    if not data.number.isdigit():  # Handle invalid input (alphabet)
+        return {"number": data.number, "error": True}
+    return classify_helper(int(data.number))
+
+# Common function to classify numbers
+def classify_helper(number: int):
     properties = []
     if is_armstrong(number):
         properties.append("armstrong")
